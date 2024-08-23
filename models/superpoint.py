@@ -157,6 +157,8 @@ class SuperPoint(nn.Module):
         x = self.relu(self.conv4a(x))
         x = self.relu(self.conv4b(x))
 
+        x = self.pool(x)
+        
         # Compute the dense keypoint scores
         cPa = self.relu(self.convPa(x))
         scores = self.convPb(cPa)
@@ -192,7 +194,7 @@ class SuperPoint(nn.Module):
         descriptors = torch.nn.functional.normalize(descriptors, p=2, dim=1)
 
         # Extract descriptors
-        descriptors = [sample_descriptors(k[None], d[None], 8)[0]
+        sampled_descriptors = [sample_descriptors(k[None], d[None], 8)[0]
                        for k, d in zip(keypoints, descriptors)]
 
         return {
@@ -200,3 +202,4 @@ class SuperPoint(nn.Module):
             'scores': scores,
             'descriptors': descriptors,
         }
+    
